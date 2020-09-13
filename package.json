@@ -1,0 +1,65 @@
+{
+  "name": "react-use-hyphen",
+  "version": "1.0.0",
+  "description": "Use hyphenated lib with React hooks",
+  "author": "dvaJi <francisco_p@outlook.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dvaJi/react-use-hyphen.git"
+  },
+  "homepage": "https://github.com/dvaJi/react-use-hyphen",
+  "main": "dist/react-use-hyphen.esm.js",
+  "umd:main": "dist/react-use-hyphen.umd.production.js",
+  "module": "dist/react-use-hyphen.esm.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "lint": "tsdx lint src",
+    "lint:fix": "tsdx lint src --fix",
+    "test": "tsdx test --env=jsdom",
+    "test:watch": "tsdx test --env=jsdom --watch",
+    "test:coverage": "tsdx test --env=jsdom --coverage",
+    "version:alpha": "npm version prerelease --preid=alpha",
+    "publish:alpha": "npm publish --tag alpha",
+    "prepublishOnly": "tsdx build"
+  },
+  "keywords": [
+    "hyphenate",
+    "hyphenation",
+    "hyphenator",
+    "react",
+    "hooks"
+  ],
+  "dependencies": {
+    "hyphenated": "^1.2.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react-hooks": "^3.4.1",
+    "@testing-library/react": "^11.0.2",
+    "@types/jest": "^26.0.13",
+    "@types/react": "^16.9.49",
+    "@types/react-dom": "^16.9.8",
+    "@types/testing-library__jest-dom": "^5.9.2",
+    "@types/testing-library__react": "^10.2.0",
+    "husky": "^4.3.0",
+    "prettier": "^2.1.1",
+    "pretty-quick": "^3.0.2",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "react-test-renderer": "^16.13.1",
+    "tsdx": "^0.13.3",
+    "tslib": "^2.0.1",
+    "typescript": "^4.0.2"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
+}
