@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 import { render } from '@testing-library/react';
+
 import useHyphen from '../src/index';
 
-const softHyphen = '\u00AD';
-const hyphenate = (...syllables: string[]) => syllables.join(softHyphen);
+const softHyphen = /\u00AD/g;
+const softHyphenReplace = '~';
+const hyphenate = (...syllables: string[]) => syllables.join(softHyphenReplace);
+const replaceSoftHyphen = (text: string | null) =>
+  text?.replace(softHyphen, softHyphenReplace);
 
 describe('useHyphen', (): void => {
   describe('Setup', () => {
@@ -13,26 +17,32 @@ describe('useHyphen', (): void => {
       const { Hyphen } = result.current;
 
       const { getByTestId } = render(
-        <Hyphen>
-          <div data-testid="hyphen-text">hyphenated</div>
-        </Hyphen>
+        <div data-testid="hyphen-text">
+          <Hyphen>hyphenated</Hyphen>
+        </div>
       );
-      expect(getByTestId('hyphen-text').textContent).toEqual(
+      expect(replaceSoftHyphen(getByTestId('hyphen-text').textContent)).toEqual(
         hyphenate('hy', 'phen', 'at', 'ed')
       );
     });
 
-    it('Returns initial value with preferred lang', () => {
-      const { result } = renderHook(() => useHyphen('enUs'));
-      const { Hyphen } = result.current;
+    it('hyphenate using the "h" export', () => {
+      const { result } = renderHook(() => useHyphen());
+      const { h } = result.current;
 
-      const { getByTestId } = render(
-        <Hyphen>
-          <div data-testid="hyphen-text">hyphenated</div>
-        </Hyphen>
-      );
-      expect(getByTestId('hyphen-text').textContent).toEqual(
-        hyphenate('hy', 'phen', 'at', 'ed')
+      expect(
+        replaceSoftHyphen(
+          h('Self-evident. Evident to one’s self and to nobody else.')
+        )
+      ).toEqual(
+        hyphenate(
+          'Self-ev',
+          'i',
+          'dent. Ev',
+          'i',
+          'dent to one’s self and to no',
+          'body else.'
+        )
       );
     });
 
@@ -49,7 +59,7 @@ describe('useHyphen', (): void => {
           </Hyphen>
         </div>
       );
-      expect(getByTestId('hyphen-text').textContent).toEqual(
+      expect(replaceSoftHyphen(getByTestId('hyphen-text').textContent)).toEqual(
         `${hyphenate('Hy', 'phen')}${hyphenate('Hy', 'phen')}`
       );
     });
@@ -66,7 +76,7 @@ describe('useHyphen', (): void => {
           </Hyphen>
         </div>
       );
-      expect(getByTestId('hyphen-text').textContent).toEqual(
+      expect(replaceSoftHyphen(getByTestId('hyphen-text').textContent)).toEqual(
         hyphenate(
           'Scrib',
           'bler, n. A pro',
@@ -102,7 +112,7 @@ describe('useHyphen', (): void => {
           </Hyphen>
         </div>
       );
-      expect(getByTestId('hyphen-text').textContent).toEqual(
+      expect(replaceSoftHyphen(getByTestId('hyphen-text').textContent)).toEqual(
         hyphenate(
           'From Am',
           'brose Bierce’s Dev',
@@ -147,7 +157,7 @@ describe('useHyphen', (): void => {
           </Hyphen>
         </div>
       );
-      expect(getByTestId('hyphen-text').textContent).toEqual(
+      expect(replaceSoftHyphen(getByTestId('hyphen-text').textContent)).toEqual(
         hyphenate(
           'From Am',
           'brose Bierce’s Dev',
@@ -191,7 +201,7 @@ describe('useHyphen', (): void => {
           </Hyphen>
         </div>
       );
-      expect(getByTestId('hyphen-text').textContent).toEqual(
+      expect(replaceSoftHyphen(getByTestId('hyphen-text').textContent)).toEqual(
         hyphenate(
           'From Am',
           'brose Bierce’s Dev',
@@ -222,7 +232,7 @@ describe('useHyphen', (): void => {
           </Hyphen>
         </div>
       );
-      expect(getByTestId('hyphen-text').textContent).toEqual(
+      expect(replaceSoftHyphen(getByTestId('hyphen-text').textContent)).toEqual(
         hyphenate(
           'Scrib',
           'bler, n. A pro',

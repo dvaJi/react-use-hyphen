@@ -1,30 +1,45 @@
 import * as React from 'react';
-import { hyphenated } from 'hyphenated';
+import { hyphenated, LanguageParam } from 'hyphenated';
 
-const Hyphenated = (language = 'enUs') => ({ children }: any): any => {
-  handleDangerouslySetInnerHTML(children, language);
-  const childrenCount = React.Children.count(children);
-  const hyphenateChild = (child: any) => {
-    if (child === null) {
-      return null;
-    } else if (child.type === Hyphenated) {
-      return child;
-    } else if (typeof child === 'string') {
-      return hyphenated(child, { language });
-    } else {
-      const { children, ...props } = child.props;
-      return children
-        ? React.cloneElement(child, props, Hyphenated(language)({ children }))
-        : child;
+interface HyphenatedProps {
+  children?: React.ReactNode;
+}
+
+const Hyphenated = (language?: LanguageParam) => {
+  const HyphenateComp = ({ children }: HyphenatedProps): any => {
+    handleDangerouslySetInnerHTML(children as React.ReactElement, language);
+    const childrenCount = React.Children.count(children);
+    const hyphenateChild = (child: React.ReactElement | null) => {
+      if (child === null) {
+        return (null as unknown) as React.ReactElement;
+      } else if (child.type === HyphenateComp) {
+        return child;
+      } else if (typeof child === 'string') {
+        return (hyphenated(child, {
+          language,
+        }) as unknown) as React.ReactElement;
+      } else {
+        const { children: propsChildren, ...props } = child.props;
+        return propsChildren
+          ? React.cloneElement(
+              child,
+              props,
+              Hyphenated(language)({ children: propsChildren })
+            )
+          : child;
+      }
+    };
+    if (childrenCount === 1) {
+      return hyphenateChild(children as React.ReactElement);
     }
+
+    return React.Children.map(children as React.ReactElement, hyphenateChild);
   };
-  if (childrenCount === 1) {
-    return hyphenateChild(children);
-  }
-  return React.Children.map(children, hyphenateChild);
+
+  return HyphenateComp;
 };
 
-export default function useHyphen(language?: string) {
+export default function useHyphen(language?: LanguageParam) {
   const Hyphen = React.useMemo(() => {
     return Hyphenated(language);
   }, [language]);
@@ -32,10 +47,13 @@ export default function useHyphen(language?: string) {
   return {
     Hyphen,
     h: hyphenated,
-  } as any;
+  };
 }
 
-function handleDangerouslySetInnerHTML(children: any, language: any) {
+function handleDangerouslySetInnerHTML(
+  children: React.ReactElement,
+  language?: LanguageParam
+) {
   if (children && children.props && children.props.dangerouslySetInnerHTML) {
     children.props.dangerouslySetInnerHTML.__html = hyphenated(
       children.props.dangerouslySetInnerHTML.__html,
