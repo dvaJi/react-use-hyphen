@@ -23,9 +23,6 @@ jobs:
       - name: Run lint
         run: npm run lint
 
-      - name: Build Package Release
-        run: npm run release
-
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN}}
